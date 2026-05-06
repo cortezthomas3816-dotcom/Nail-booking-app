@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NAILED BY HARM P</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #090909;
+      display: flex;
+      justify-content: center;
+      padding-top: 40px;
+    }
+
+    .app {
+      width: 350px;
+      background: whitesmoke;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+    }
+
+    button {
+      background: #4f7cff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .booking {
+      margin-top: 15px;
+      padding: 10px;
+      background: #f7f8fc;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+  <h2>NAILED BY HARM P 💅</h2>
+
+  <input id="name" placeholder="Client Name" />
+  <input id="date" type="date" />
+  <input id="time" type="time" />
+
+  <button onclick="book()">Book Appointment</button>
+
+  <div id="list"></div>
+</div>
+
+<script>
+  let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+
+  function book() {
+    let name = document.getElementById("name").value;
+    let date = document.getElementById("date").value;
+    let time = document.getElementById("time").value;
+
+    if (!name || !date || !time) return;
+
+    // 🚫 prevent double booking
+    let exists = bookings.find(b => b.date === date && b.time === time);
+    if (exists) {
+      alert("This time slot is already booked!");
+      return;
+    }
+
+    bookings.push({ name, date, time });
+    save();
+    render();
+  }
+
+  function deleteBooking(index) {
+    bookings.splice(index, 1);
+    save();
+    render();
+  }
+
+  function save() {
+    localStorage.setItem("bookings", JSON.stringify(bookings));
+  }
+
+  function render() {
+    let list = document.getElementById("list");
+    list.innerHTML = "";
+
+    bookings.forEach((b, index) => {
+      let div = document.createElement("div");
+      div.className = "booking";
+
+      div.innerHTML = `
+        <b>${b.name}</b><br>
+        ${b.date} at ${b.time}
+        <br><button onclick="deleteBooking(${index})">Cancel</button>
+      `;
+
+      list.appendChild(div);
+    });
+  }
+
+  render();
+</script>
+
+</body>
+</html>
